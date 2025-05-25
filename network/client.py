@@ -92,7 +92,6 @@ class p2pInterface():
 
         while True:
             msg = self.recvMsg(type='server')
-            print(msg)
             if int(msg["is full"]):
                 self.index = int(msg["id"])
                 self.userIds = msg["userIds"]

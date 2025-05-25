@@ -16,7 +16,6 @@ class HashChain:
         # 將操作與前一個雜湊值拼接
         operation_data = f"{action}:{last_hash}"
         new_hash = self._hash(operation_data)
-        print(f'new hash: {new_hash}')
         self.chain.append((action, new_hash))
         return new_hash
 

@@ -40,9 +40,7 @@ class DigitalSignature:
         return base64.b64encode(sig).decode('utf-8')
     
     def verifyUserId(self, userId:str, publicKey:str):
-        print(userId, publicKey)
         ret = userId == hashlib.sha256(publicKey.encode()).hexdigest
-        print(ret)
         return ret
 
     def verify(self, sig_b64: str, pKey_b64: str, msg: str) -> bool:
@@ -71,7 +69,6 @@ class DigitalSignature:
             #print("簽章驗證成功：訊息完整且發送者可信")
             return True
         except InvalidSignature:
-            print(msg)
             print("簽章驗證失敗：可能遭到篡改或冒用")
             return False
         except Exception as e:

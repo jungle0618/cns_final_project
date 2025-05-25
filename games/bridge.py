@@ -96,7 +96,7 @@ class Bridge(client.p2pInterface):
     trick: int
     dummyIsLaid: bool
     dummyCards: list[int]
-    def __init__(self, p2pInterface: client.p2pInterface, encryption = False, schuffleCheat = False, playCheat = False, hashChain = True):
+    def __init__(self, p2pInterface: client.p2pInterface, encryption = False, schuffleCheat = False, playCheat = False, hashChain = True, autoPlay = False):
         #建立p2p連線
         self.p2pInterface = p2pInterface
 
@@ -109,7 +109,7 @@ class Bridge(client.p2pInterface):
         self.schuffleCheat = schuffleCheat
         self.playCheat = playCheat
         self.isHashChain = hashChain
-        
+        self.autoPlay = autoPlay
         if encryption:
             self.procotocol = Protocol(Pos=self.Pos, nPlayer=4, nCards=52)
         if self.isHashChain:
@@ -491,7 +491,6 @@ class Bridge(client.p2pInterface):
                     playOneCard()
                 else:
                     otherPlayOneCard()
-                print(self.dummyCards, self.oneRoundCards)
                 if self.playPos == self.dummyPos and self.Pos != self.dummyPos:
                     self.dummyCards.remove(self.oneRoundCards[-1])
                 if self.isHashChain:
@@ -505,8 +504,8 @@ class Bridge(client.p2pInterface):
             self.defenderTrick += (winner+self.declarerPos)%2 != 0
 
 
-        def getCard(cards:list[int]=[], oneRoundCards:list[int]=[], autoplay=True):
-            if autoplay:
+        def getCard(cards:list[int]=[], oneRoundCards:list[int]=[]):
+            if self.autoPlay:
                 for card_val in cards:
                     if isValidCard(card_val, cards, oneRoundCards):
                         time.sleep(0.2)
@@ -564,10 +563,7 @@ class Bridge(client.p2pInterface):
                 self.p2pInterface.sendMsg(msg, peerIndex = self.dummyPos)
             if self.encryption:#如果有加密功能，則驗證其他人的牌
                 card_val, sender = self.procotocol.otherplayCards(self.p2pInterface)
-                print(card_val, sender, self.playPos)
                 if card_val == -1 or sender != self.playPos:
-                    
-                    print('aaaaaa')
                     return -1
             else:
                 msg = self.p2pInterface.recvMsg(type='play card')
@@ -691,11 +687,9 @@ class Bridge(client.p2pInterface):
                     }
                 }
                 self.p2pInterface.sendMsg(msg)
-                print(self.score)
             else:
                 msg = self.p2pInterface.recvMsg(type='result')
                 self.score = int(msg["deal"]["score"])
-                print(self.score)
             if self.isHashChain:
                 if self.dealName == 'AP':
                     self.hashChain.add_operation(
@@ -723,7 +717,6 @@ class Bridge(client.p2pInterface):
         assert self.isHashChain and self.p2pInterface.isSignature
         if self.index == 0:
             chain = self.hashChain.getChain()
-            print(chain)
             self.p2pInterface.sendMsg(message={
                 'type':'get hashChain signature',
                 'chain':chain,
@@ -802,19 +795,22 @@ def load_config(path='config.txt'):
         'isSignature': settings.getboolean('isSignature'),
         'encryption': settings.getboolean('encryption'),
         'hashChain': settings.getboolean('hashChain'),
+        'autoPlay': settings.getboolean('autoPlay'),
         'schuffleCheat': settings.getboolean('schuffleCheat'),
         'playCheat': settings.getboolean('playCheat'),
         'serverHost': settings.get('serverHost'),
         'serverPort': settings.getint('serverPort'),
     }
-if __name__ == '__main__':
+
+def main():
     cfg = load_config()
-    p2pInterface = client.p2pInterface(isSignature=cfg['isSignature'], serverHost=cfg['serverHost'], serverPort=cfg['serverPort'])
+    p2pInterface = client.p2pInterface(isSignature=cfg["isSignature"], serverHost=cfg["serverHost"], serverPort=cfg["serverPort"])
     bridge = Bridge(
         p2pInterface=p2pInterface,
-        encryption=cfg['encryption'],
-        schuffleCheat=cfg['schuffleCheat'],
-        playCheat=cfg['playCheat'],
-        hashChain = cfg['hashChain'],
+        encryption=cfg["encryption"],
+        schuffleCheat=cfg["schuffleCheat"],
+        playCheat=cfg["playCheat"],
+        hashChain = cfg["hashChain"],
+        autoPlay = cfg["autoPlay"]
     )
     bridge.run()

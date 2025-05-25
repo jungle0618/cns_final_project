@@ -242,7 +242,6 @@ class Protocol:
             k_prod = (k_prod * self.allK[player][card_id]) % order
         P = self.finalP[card_id]
         P0 = self.decrypt(P, k_prod)
-        print(card_id, card_val, sender)
         if P0 == self.initP[card_val]:
             p2pInterface.sendMsg(
                 {

@@ -9,6 +9,8 @@ encryption = True
 
 hashChain = True
 
+autoPlay = False
+
 # 是否允許玩家在洗牌階段作弊 (True/False)
 schuffleCheat = False
 
