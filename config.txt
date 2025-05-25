@@ -1,0 +1,22 @@
+[DEFAULT]
+
+# 是否啟用數位簽章 (True/False)
+isSignature = True
+
+# 是否使用 mental poker 洗牌方式 (True/False)
+encryption = True
+
+
+hashChain = True
+
+# 是否允許玩家在洗牌階段作弊 (True/False)
+schuffleCheat = False
+
+# 是否允許玩家在出牌階段作弊 (True/False)
+playCheat = True
+
+serverHost = 0.0.0.0
+#serverHost = 140.112.30.186
+serverPort = 9999
+
+#userId

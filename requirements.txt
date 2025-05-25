@@ -1,0 +1,4 @@
+cryptography>=3.2
+ecdsa>=0.17.0
+numpy
+hashlib
