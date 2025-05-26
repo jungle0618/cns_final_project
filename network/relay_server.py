@@ -117,7 +117,6 @@ class SocketServer:
         while msgBuf.empty():
             socketTools.recvMsg(socket=clientSocket, queue=msgBuf)
         msg = msgBuf.get()
-        print(msg)
         return msg
 
     def sendMsg(self, msg:dict, clientSocket:socket.socket):
@@ -129,8 +128,7 @@ class SocketServer:
                             msg=msg,
                             digitalSignature=self.digitalSignature)
     def tranMsg(self, msg:dict, clientSocket:socket.socket):
-        data = json.dumps(msg, sort_keys=True, separators=(',', ':'))   + '\n'
-        clientSocket.sendall(data.encode('utf-8'))
+        socketTools.transMsg(socket=clientSocket, msg=msg)
 
     def handle_client(self, clientSocket:socket.socket, client_address):
         msgBuf = queue.Queue()

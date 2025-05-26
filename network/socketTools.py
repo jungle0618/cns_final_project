@@ -20,8 +20,11 @@ def sendMsg(socket:socket.socket,
                              userId=userId,
                              isSignature=isSignature,
                              digitalSignature=digitalSignature)
-    msg1 = json.dumps(msg1, sort_keys=True, separators=(',', ':'))  + '\n'
-    socket.sendall(msg1.encode('utf-8'))
+    transMsg(socket=socket, msg=msg1)
+def transMsg(socket:socket.socket, msg:dict):
+    msg_str = json.dumps(msg, sort_keys=True, separators=(',', ':')).encode('utf-8')
+    msg_length = len(msg_str).to_bytes(4, byteorder='big')  # 4 bytes length header
+    socket.sendall(msg_length + msg_str)
 
 def wrapWithSignature(message: dict,
                       index: int,
@@ -76,15 +79,22 @@ def wrapWithSignature(message: dict,
         }
 
 def recvMsg(socket:socket.socket, queue:queue.Queue):
-    raw = socket.recv(114514)
-    if not raw:
-        raise
-    text = raw.decode('utf-8')
-    for line in text.split('\n'):
-        if not line:
-            continue
-        payload = json.loads(line)
-        queue.put(payload)
+    # 先收4個byte的長度
+    raw_len = socket.recv(4)
+    if not raw_len:
+        return None
+    msg_len = int.from_bytes(raw_len, byteorder='big')
+    
+    # 再收指定長度的JSON資料
+    data = b''
+    while len(data) < msg_len:
+        more = socket.recv(msg_len - len(data))
+        if not more:
+            raise ConnectionError("Connection closed before full message received")
+        data += more
+    json_data = json.loads(data.decode('utf-8'))
+    queue.put(json_data)
+    return json_data
 
 def getMsg(queue: queue.Queue, 
            type: str = '', 
@@ -174,8 +184,8 @@ def getMsg(queue: queue.Queue,
             for item in temp_queue:
                 queue.put(item)
             
-            
             return raw_data["payload"]
+        
             
     except json.JSONDecodeError:
         logger.error("Failed to decode message")
