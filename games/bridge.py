@@ -502,6 +502,7 @@ class Bridge(client.p2pInterface):
             self.trick += (winner+self.Pos)%2 == 0
             self.declarerTrick += (winner+self.declarerPos)%2 == 0
             self.defenderTrick += (winner+self.declarerPos)%2 != 0
+            input('按Enter繼續')
 
 
         def getCard(cards:list[int]=[], oneRoundCards:list[int]=[]):
