@@ -497,12 +497,20 @@ class Bridge(client.p2pInterface):
                     self.hashChain.add_operation(f'type:play, playerId:{self.playPos}, play:{self.oneRoundCards[-1]}')
                 self.playPos = (self.playPos+1)%4
             #每圈結算s
+            self.display(isDisplayCards=1, cards=self.cards, isDisplayDummyCards=self.dummyIsLaid, dummyCards=self.dummyCards, isDisplayDeal=1, 
+            deal={
+                'roundNum': self.roundNum,
+                'declarerTrick': self.declarerTrick,
+                'defenderTrick': self.defenderTrick,
+                'dealName': self.dealName,
+                'oneRoundCards': self.oneRoundCards
+            })
+            input('按Enter繼續')
             winner = compare4Cards(self.oneRoundCards, self.trump, self.leadPos)
             self.leadPos = winner
             self.trick += (winner+self.Pos)%2 == 0
             self.declarerTrick += (winner+self.declarerPos)%2 == 0
             self.defenderTrick += (winner+self.declarerPos)%2 != 0
-            input('按Enter繼續')
 
 
         def getCard(cards:list[int]=[], oneRoundCards:list[int]=[]):
