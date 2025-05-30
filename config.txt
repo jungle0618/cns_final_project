@@ -9,7 +9,7 @@ encryption = True
 
 hashChain = True
 
-autoPlay = False
+autoPlay = True
 
 # 是否允許玩家在洗牌階段作弊 (True/False)
 schuffleCheat = False
@@ -17,8 +17,8 @@ schuffleCheat = False
 # 是否允許玩家在出牌階段作弊 (True/False)
 playCheat = True
 
-#serverHost = 0.0.0.0
-serverHost = 140.112.30.186
+serverHost = 0.0.0.0
+#serverHost = 140.112.30.186
 serverPort = 9999
 
 #userId

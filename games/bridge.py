@@ -505,7 +505,6 @@ class Bridge(client.p2pInterface):
                 'dealName': self.dealName,
                 'oneRoundCards': self.oneRoundCards
             })
-            input('按Enter繼續')
             winner = compare4Cards(self.oneRoundCards, self.trump, self.leadPos)
             self.leadPos = winner
             self.trick += (winner+self.Pos)%2 == 0
